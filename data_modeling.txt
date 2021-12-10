@@ -1,0 +1,119 @@
+Objective: Design a database with at least 4 tables for a pet adoption agency
+that I am opening where animals will be rescued and cared for.  Will also need
+to keep track of good matches for potential owners that will adopt.
+
+Brainstorming:
+> Owner's name, phone number, email
+> Owner's lifestyle (active or sedentary), family living in the home, previous 
+experience with pets, living quarters (house or apartment)
+> What owner is looking for in a pet: size, pet type, breed, disability, age,
+previous training (prefers a trained pet?)
+> Pet's name, age, type, breed, size, notes on training, notes on disabilities,
+other notes on temperament, etc.
+
+Table Ideas:
+
+Owner_info:
+	- Name
+	- Phone number
+	- Email
+About_owner:
+	- Lifestyle
+	- Household_members
+	- Previous_experience
+	- Home_type
+Household_members:
+	- Age
+	- Sex/Gender
+Desired_pet:
+	- Size
+	- Age
+	- Type
+	- Breed
+	- Disabilities
+	- Training_completed
+Pet:
+	- Name
+	- Age
+	- Size
+	- Type
+	- Breed
+	- Training_notes
+	- Disability_notes
+	- Temperament_notes
+	- Other_notes
+Adopted:
+	- Owner_id
+	- Pet_id
+
+One to One:
+	- Tables and table id's (PRIMARY KEY's)
+	- Owner_info => About_owner
+	- Pet => Adopted (A single pet can be adopted by a single owner)
+One to Many:
+	- Owner_info => Desired_pet (A single owner may desire to adopt more
+	  than one pet)
+	- Owner_info => Adopted (Owner may adopt more than one pet)
+	- About_owner => Household_members (May have multiple people living with
+	  potential owner)
+Many to Many:
+	- Desired_pet => Pet (Can have multiple matches for pets and what owners
+	  want if initial matches are primarily based on Type, Breed, etc but
+	  may still be ruled out later on due to other factors such as
+	  lifestyle)
+
+List of Tables:
+
+CREATE TABLE owner_info(
+  owner_id SERIAL PRIMARY KEY,
+  owner_name VARCHAR(50),
+  owner_phone VARCHAR(10),
+  owner_email VARCHAR(50)
+);
+
+CREATE TABLE about_owner(
+  owner_id INT NOT NULL REFERENCES owner_info(owner_id),
+  life_style VARCHAR(200),
+  household_members_id SERIAL PRIMARY KEY,
+  previous_experience VARCHAR(200),
+  home_type VARCHAR(50)
+);
+
+CREATE TABLE household_members(
+  member_id INT NOT NULL REFERENCES about_owner(household_members_id),
+  person_id SERIAL PRIMARY KEY,
+  age INT,
+  sex_gender VARCHAR(6)
+);
+
+CREATE TABLE desired_pet(
+  desired_pet_id INT NOT NULL REFERENCES owner_info(owner_id),
+  size INT,
+  age INT,
+  animal_type VARCHAR(50),
+  animal_breed VARCHAR(50),
+  training_completed VARCHAR(200),
+  disabilities VARCHAR(200),
+  temperament VARCHAR(200)
+);
+
+CREATE TABLE pet(
+  pet_id SERIAL PRIMARY KEY,
+  pet_size INT,
+  pet_age INT,
+  pet_type VARCHAR(50),
+  pet_breed VARCHAR(50),
+  training_notes VARCHAR(200),
+  disabilities_notes VARCHAR(200),
+  temperament_notes VARCHAR(200),
+  other_notes VARCHAR(200)
+);
+
+CREATE TABLE adopted(
+  adopted_id SERIAL PRIMARY KEY,
+  owner_id INT NOT NULL REFERENCES owner_info(owner_id),
+  pet_id INT NOT NULL REFERENCES pet(pet_id)
+);
+
+
+	
